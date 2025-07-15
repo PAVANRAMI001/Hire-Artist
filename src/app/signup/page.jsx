@@ -15,6 +15,8 @@ export default function UploadPage() {
   const [rate, setRate] = useState('');
   const [description, setDesctiption] = useState('');
   const [phone, setPhone] = useState('');
+  const [loading, setLoading] = useState(false);
+
   const fileInputRef = useRef();
   const videoInputRef = useRef();
 
@@ -36,11 +38,13 @@ export default function UploadPage() {
       return;
     }
   
-
+    setLoading(true); // ✅ Start loading
+    setStatus('');
+  
     const formData = new FormData();
     formData.append('name', userName);
     formData.append('password', password);
-
+  
     if (type_custumer === "Developer") {
       formData.append('file', selectedFile);
       formData.append('roal', roal);
@@ -49,21 +53,23 @@ export default function UploadPage() {
       formData.append('phone', phone);
       formData.append('Video', selectedVideo);
     }
-
+  
     try {
       const res = await fetch(`/api/upload/${type_custumer}`, {
         method: 'POST',
         body: formData,
       });
-
+  
       const result = await res.json();
-      setStatus(result.success ? '✅ Signup Sucessful!' : '❌ Signup failed OR id may already exists!');
-      
+      setStatus(result.success ? '✅ Signup Sucessful!' : '❌ Signup failed OR id may already exist!');
     } catch (err) {
       console.error('Upload failed:', err);
       setStatus('❌ Upload failed.');
+    } finally {
+      setLoading(false); // ✅ Stop loading
     }
   };
+  
 
   const handleFileDrop = (e, type) => {
     e.preventDefault();
@@ -101,6 +107,7 @@ export default function UploadPage() {
 
               <div
                 className="drop-zone"
+                name="image"
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={(e) => handleFileDrop(e, 'image')}
                 onClick={() => fileInputRef.current.click()}
@@ -111,6 +118,7 @@ export default function UploadPage() {
 
               <div
                 className="drop-zone"
+                name="Video"
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={(e) => handleFileDrop(e, 'video')}
                 onClick={() => videoInputRef.current.click()}
@@ -121,7 +129,14 @@ export default function UploadPage() {
             </>
           )}
 
-          <button onClick={handleUpload} className="upload-btn">Submit 🚀</button>
+<button
+  onClick={handleUpload}
+  className="upload-btn"
+  disabled={loading}
+>
+  {loading ? 'Signing...' : 'Submit 🚀'}
+</button>
+
           {status && <p className="status">{status}</p>}
           
         </div>

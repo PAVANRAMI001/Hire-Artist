@@ -2,9 +2,8 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
-import { mkdir, writeFile, unlink } from "fs/promises";
-import path from "path";
-
+import { put } from '@vercel/blob';
+import {del} from '@vercel/blob';
 import { connectDB } from "@/app/utils/db";
 import { ProfilePic } from "@/app/api/models/profile"; // adjust if needed
 
@@ -56,6 +55,7 @@ export async function PUT(req) {
 
   /* 4️⃣  Helper: save a file & return public URL */
   const saveFile = async (fileObj) => {
+    /*
     const uploadsDir = path.join(process.cwd(), "public", "uploads");
     await mkdir(uploadsDir, { recursive: true });
 
@@ -68,6 +68,15 @@ export async function PUT(req) {
 
     await writeFile(dest, Buffer.from(await fileObj.arrayBuffer()));
     return `/uploads/${filename}`; // public‑facing path
+    */
+    const filename = fileObj.name || 'upload.file';
+  
+    const blob = await put(filename, fileObj, {
+      access: 'public',
+      addRandomSuffix: true, // ✅ avoids duplicate filename errors
+    });
+  
+    return blob.url;
   };
 
   /* 5️⃣  Handle avatar file */
@@ -91,19 +100,26 @@ export async function PUT(req) {
   );
 
   /* 8️⃣  Delete old local files if they were replaced */
-  const deleteIfLocal = async (url) => {
-    if (!url || !url.startsWith("/uploads/")) return;
+  const deleteIfBlob = async (url) => {
+    if (!url || !url.includes('vercel-storage.com')) return;
+  
     try {
-      await unlink(path.join(process.cwd(), "public", url));
-    } catch { /* file might already be gone – ignore */ }
+      // Get the path from the full URL
+      const pathname = new URL(url).pathname.slice(1); // remove leading "/"
+      await del(pathname);
+    } catch (err) {
+      console.warn('Blob deletion failed or already gone:', err.message);
+    }
   };
 
   if (update.url && oldDoc.url && oldDoc.url !== update.url) {
-    await deleteIfLocal(oldDoc.url);
+    await deleteIfBlob(oldDoc.url);
   }
+  
   if (update.Video && oldDoc.Video && oldDoc.Video !== update.Video) {
-    await deleteIfLocal(oldDoc.Video);
+    await deleteIfBlob(oldDoc.Video);
   }
+  
 
   return NextResponse.json({ ok: true, profile: newDoc });
 }

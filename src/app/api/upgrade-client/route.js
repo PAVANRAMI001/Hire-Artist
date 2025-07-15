@@ -2,8 +2,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
-import { mkdir, writeFile } from "fs/promises";
-import path from "path";
+import { put } from '@vercel/blob'
 
 import { connectDB } from "@/app/utils/db";
 import { ProfilePic } from "@/app/api/models/profile";
@@ -12,17 +11,24 @@ export const dynamic = "force-dynamic"; // Required for Vercel file writes
 
 /* ─────────── Helper to save file to public/uploads ─────────── */
 async function saveToUploads(fileObj) {
-  const uploadsDir = path.join(process.cwd(), "public", "uploads");
-  await mkdir(uploadsDir, { recursive: true });
-
+  //const uploadsDir = path.join(process.cwd(), "public", "uploads");
+  //await mkdir(uploadsDir, { recursive: true });
+  /*
   const ts = Date.now();
   const ext = path.extname(fileObj.name);
   const base = path.basename(fileObj.name, ext).replace(/\s+/g, "_");
   const filename = `${base}_${ts}${ext}`;
   const dest = path.join(uploadsDir, filename);
+  */
+  const filename = fileObj.name || 'upload.file';
+  
+  const blob = await put(filename, fileObj, {
+    access: 'public',
+    addRandomSuffix: true, // ✅ avoids duplicate filename errors
+  });
 
-  await writeFile(dest, Buffer.from(await fileObj.arrayBuffer()));
-  return `/uploads/${filename}`; // ⬅ Return public URL
+  return blob.url;
+ 
 }
 
 /* ─────────── PUT /api/upgrade-client ─────────── */

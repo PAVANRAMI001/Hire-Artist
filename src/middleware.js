@@ -1,13 +1,10 @@
 import { NextResponse } from 'next/server';
-import { get } from '@vercel/edge-config';
+
 import { jwtVerify } from 'jose';
 
 export async function middleware(request) {
   const token = request.cookies.get('authToken')?.value;
-  const greeting = await get('greeting');
-  if(greeting){
-    return NextResponse.json(greeting);
-  }
+  
   if (!token) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
@@ -22,7 +19,7 @@ export async function middleware(request) {
 }
 
 export const config = {
-  matcher: ['/hiring/:path*','/upgrade-client/:path*','/welcome'], // protect hiring and subroutes
+  matcher: ['/hiring/:path*','/upgrade-client/:path*'], // protect hiring and subroutes
 };
 
 /*
