@@ -1,0 +1,236 @@
+/* hiring.css – Hyper‑stylish artist cards & mind‑blowing grid */
+
+:root {
+  --clr-primary: #007bff;
+  --clr-secondary: #ff80bf;
+  --clr-dark: #111827;
+  --clr-light: #ffffff;
+  --clr-gradient: linear-gradient(135deg, #dbeafe 0%, #e9d5ff 45%, #ffe4e6 100%);
+  --radius-xl: 22px;
+  --shadow-main: 0 12px 28px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 18px 36px rgba(0, 0, 0, 0.14);
+}
+
+/* =========  Layout Wrapper  ========= */
+.hiring-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--clr-gradient);
+  padding: 1.2rem;
+  color: var(--clr-dark);
+  overflow-x: hidden;
+}
+
+/* =========  Navbar  ========= */
+.navbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(14px);
+  border-radius: var(--radius-xl);
+  padding: 0.9rem 1.6rem;
+  box-shadow: var(--shadow-main);
+  z-index: 10;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Mobile responsive styling */
+@media (max-width: 768px) {
+  .navbar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 0.8rem;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .navbar::-webkit-scrollbar {
+    display: none; /* optional: hide scrollbar */
+  }
+}
+
+
+.logo {
+  font-size: 1.65rem;
+  font-weight: 800;
+}
+.search-bar{
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  font-size: 1rem;
+  width: 300px;
+  flex: 2;
+}
+.search-bar::placeholder {
+  color: #6b7280;
+  opacity: 1;
+}
+.role-filter {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  font-size: 1rem;
+  min-width: 50px;
+  flex: 0.3;
+}
+.profile-icon {
+  border: 2px double black;
+  
+  font-size: 1.6rem;
+  cursor: pointer;
+  transition: transform .2s;
+}
+.profile-icon:hover { transform: scale(1.2); }
+
+/* =========  Title  ========= */
+.hiring-title {
+  text-align: center;
+  font-size: 2.4rem;
+  font-weight: 800;
+  margin: 2.5rem 0 1rem;
+  animation: fadeDown .8s both;
+  letter-spacing: -0.5px;
+}
+@keyframes fadeDown { from {opacity:0; transform:translateY(-30px);} to {opacity:1; transform:translateY(0);} }
+
+/* =========  Card Grid – unexpected layout  ========= */
+.card-grid {
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto 5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2.2rem;
+  position: relative;
+  perspective: 1200px;              /* 3‑D hover tilt */
+}
+.card-grid::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='160' height='160' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='20' cy='20' r='2'/%3E%3C/g%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+  animation: slidePattern 40s linear infinite;
+  pointer-events: none;
+}
+@keyframes slidePattern { 0%{transform:translateX(0);} 100%{transform:translateX(-160px);} }
+
+/* =========  Card (artist)  ========= */
+.card {
+  position: relative;
+  background: var(--clr-light);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-main);
+  transition: transform .6s cubic-bezier(.19,1,.22,1), box-shadow .6s;
+  transform-style: preserve-3d;
+  transform-origin: center;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 4.5rem;            /* space for fixed button */
+  opacity: 0;
+  animation: riseIn .9s forwards;
+}
+@keyframes riseIn { from {transform:translateY(60px) rotateX(15deg); opacity:0;} to {transform:translateY(0) rotateX(0); opacity:1;} }
+
+.card:hover {
+  transform: translateY(-12px) rotateX(6deg) rotateY(-6deg) scale(1.02);
+  box-shadow: var(--shadow-hover);
+}
+
+.card-image {
+  border-radius: 20px;
+  padding: 10px;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+.card-body {
+  padding: 1.1rem 1.4rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  position: relative;
+}
+.card-name {
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 0.3rem;
+  color: var(--clr-dark);
+}
+
+/* ===== Detail paragraphs ===== */
+.card-body p {
+  font-size: 0.93rem;
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: 8px;
+  padding: 6px 10px;
+  background: rgba(0,0,0,0.03);
+
+  white-space: nowrap;       /* ❌ prevent multi-line wrap */
+  overflow: hidden;          /* ✅ hide extra text */
+  text-overflow: ellipsis;   /* ✅ show ... when overflowing */
+}
+
+.card-body p:nth-of-type(1)::before {content:'🎤';}
+.card-body p:nth-of-type(2)::before {content:'💸';}
+.card-body p:nth-of-type(3)::before {content:'📝';}
+.card-body p:nth-of-type(4)::before {content:'📞';}
+.card-body p:nth-of-type(odd) {background: rgba(0,123,255,0.07);}   /* alternating tint */
+
+/* ===== View Profile button (fixed inside card) ===== */
+.profile-link {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 3rem);
+  text-align: center;
+  padding: 12px 20px;
+  background: var(--clr-primary);
+  color: var(--clr-light);
+  border-radius: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 6px 16px rgba(0,123,255,0.28);
+  transition: transform .3s, box-shadow .3s, background .3s;
+}
+.profile-link:hover {
+  background: var(--clr-secondary);
+  transform: translateX(-50%) translateY(-3px);
+  box-shadow: 0 12px 20px rgba(255,128,191,0.35);
+}
+
+/* =========  Sidebar animation  ========= */
+.profile-sidebar {
+  position: fixed;
+  top: 0; right: 0;
+  width: 320px;
+  height: 100vh;
+  background: rgba(255,255,255,0.96);
+  box-shadow: -6px 0 24px rgba(0,0,0,.12);
+  padding: 2rem 1.5rem;
+  overflow-y: auto;
+  transform: translateX(100%);
+  animation: slideIn .6s forwards;
+  z-index: 100;
+}
+@keyframes slideIn { to { transform: translateX(0); } }
+
+/* =========  Responsive Tweaks  ========= */
+@media (max-width: 640px) {
+  .navbar { flex-direction: column; gap: 0.8rem; }
+  .search-bar, .role-filter { flex: 1 1 100%; min-width: unset; }
+  .hiring-title { font-size: 2rem; }
+  .card-body p { font-size: 0.88rem; }
+}

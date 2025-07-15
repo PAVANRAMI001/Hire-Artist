@@ -1,0 +1,313 @@
+/* =========================================
+   Ultra‑Polished Artist Profile Styles
+   (drop‑in replacement for profile.css)
+   ========================================= */
+
+:root {
+    /* Color tokens */
+    --clr-bg-dark: radial-gradient(circle at 30% 30%, #0b0c1a 0%, #14182f 80%);
+    --clr-bg-light: radial-gradient(circle at 30% 30%, #eaf3ff 0%, #d2dbee 80%);
+    --clr-primary: #33c4ff;
+    --clr-primary-dark: #0077ff;
+    --clr-accent: #1affc9;
+    --clr-card-dark: rgba(255, 255, 255, 0.06);
+    --clr-card-light: rgba(255, 255, 255, 0.9);
+    --clr-text-dark: #0e1117;
+    --radius-lg: 24px;
+    --radius-sm: 12px;
+    --shadow-xl: 0 30px 70px rgba(0, 0, 0, 0.6);
+    --transition-fast: 0.35s ease;
+    --transition-slow: 0.8s cubic-bezier(0.25, 1, 0.3, 1);
+    --video-bg-color: #0b0c1a;
+}
+
+
+
+
+/* ===== Global foundation ===== */
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    font-family: "Inter", "Segoe UI", sans-serif;
+    background: var(--clr-bg-dark);
+    color: #fafafa;
+    overflow-x: hidden;
+    animation: bodyFade 1.2s ease both;
+}
+
+body.light-theme {
+    --video-bg-color: #eaf3ff;
+    background: var(--clr-bg-light);
+    color: var(--clr-text-dark);
+}
+
+@keyframes bodyFade {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* fun star‑field background */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(#ffffff 1px, transparent 1px);
+    background-size: 3px 3px;
+    opacity: 0.04;
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* ===== Theme toggle ===== */
+.theme-switch {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    width: 48px;
+    height: 24px;
+    cursor: pointer;
+    appearance: none;
+    background: linear-gradient(90deg, var(--clr-primary-dark), var(--clr-primary));
+    border-radius: 999px;
+    transition: filter var(--transition-fast);
+    box-shadow: 0 4px 16px rgba(0, 119, 255, 0.4);
+}
+
+.theme-switch::before {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    transition: transform var(--transition-fast);
+}
+
+.theme-switch:checked::before {
+    transform: translateX(24px);
+}
+
+.theme-switch-label {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 56px;
+    height: 32px;
+    display: block;
+    text-indent: -9999px;
+}
+
+/* ===== Card / layout ===== */
+.profile-wrapper {
+    max-width: 1000px;
+    margin: 100px auto;
+    padding: 60px clamp(1.2rem, 5vw, 3rem);
+    border-radius: var(--radius-lg);
+    background: var(--clr-card-dark);
+    backdrop-filter: blur(14px) saturate(140%);
+    box-shadow: var(--shadow-xl);
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    align-items: start;
+    gap: 50px;
+    animation: cardEnter 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+body.light-theme .profile-wrapper {
+    background: var(--clr-card-light);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+}
+
+@keyframes cardEnter {
+    from {
+        opacity: 0;
+        transform: translateY(60px) scale(0.96);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* ===== Avatar ===== */
+.profile-image {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 6px solid #fff;
+    box-shadow: 0 0 30px rgba(51, 196, 255, 0.5);
+    transition: transform var(--transition-slow), box-shadow var(--transition-fast);
+}
+
+.profile-image:hover {
+    transform: rotate(4deg) scale(1.07);
+    box-shadow: 0 0 40px rgba(26, 255, 201, 0.55);
+}
+
+/* ===== Title ===== */
+#artist-name {
+    grid-column: 1 / -1;
+    margin: 0 0 20px;
+    font-size: clamp(2.1rem, 1rem + 3vw, 3.2rem);
+    text-align: center;
+
+    background: linear-gradient(90deg, var(--clr-primary), var(--clr-primary-dark));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+
+
+body.light-theme #artist-name {
+    background: linear-gradient(90deg, #162b5b, #485bff);
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    -webkit-background-clip: text;
+}
+
+/* ===== Details ===== */
+.profile-details {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    font-size: 1.1rem;
+    line-height: 1.8rem;
+    color: #e1e7ff;
+}
+
+.profile-details strong {
+    color: var(--clr-accent);
+}
+
+body.light-theme .profile-details {
+    color: var(--clr-text-dark);
+}
+
+body.light-theme .profile-details strong {
+    color: var(--clr-primary-dark);
+}
+
+/* ===== Hire button ===== */
+.hire-button {
+    padding: 16px 48px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: var(--radius-sm);
+    align-self: start;
+    background: linear-gradient(135deg, var(--clr-primary-dark), var(--clr-primary));
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(0, 119, 255, 0.45);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    position: relative;
+    overflow: hidden;
+}
+
+.hire-button:hover {
+    transform: translateY(-4px) scale(1.04);
+    box-shadow: 0 10px 28px rgba(0, 119, 255, 0.6);
+}
+
+.hire-button:active {
+    transform: translateY(-1px) scale(0.99);
+}
+
+.hire-button::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease, height 0.6s ease;
+}
+
+.hire-button:hover::before {
+    width: 380px;
+    height: 380px;
+    opacity: 0;
+}
+
+/* ===== Video ===== */
+.video-container {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 50px;
+    padding: 0 16px;
+    animation: fadeInVideo 1s ease-out both 0.3s;
+}
+
+
+
+video {
+    width: 100%;
+    max-width: 800px;
+    max-height: 450px;
+    aspect-ratio: 16 / 9;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+    border-radius: var(--radius-lg);
+    background-color: var(--video-bg-color);
+    box-shadow: 0 30px 60px rgba(0, 255, 255, 0.3);
+    transition: transform 0.4s ease;
+}
+
+video:hover {
+    transform: scale(1.02);
+}
+
+
+
+
+
+@keyframes fadeInVideo {
+    from {
+        opacity: 0;
+        transform: translateY(40px) scale(0.94);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* ===== Responsive tweaks ===== */
+@media (max-width: 720px) {
+    .profile-wrapper {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        padding: 50px 20px;
+    }
+
+    .profile-image {
+        width: 160px;
+        height: 160px;
+        justify-self: center;
+    }
+
+    .hire-button {
+        align-self: center;
+    }
+}
